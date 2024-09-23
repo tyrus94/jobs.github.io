@@ -1,77 +1,75 @@
-const form = document.getElementById('jobAlertForm');
-const jobListingsDiv = document.getElementById('jobListings');
-const parser = new RSSParser();
-const jobCategorySelect = document.getElementById('jobCategory');
+const appId = "adbe43d7"; // Your Adzuna application ID
+const appKey = "2abd1f259a8f9ca5b42625f016173e0b"; // Your Adzuna application key
+let offset = 0;
 
-async function fetchCategories() {
-    const rssUrl = 'https://www.jobsinkenya.co.ke/wpjobboard/xml/rss/?filter=active';
-
-    try {
-        const feed = await parser.parseURL(rssUrl);
-        const categories = new Set();
-
-        feed.items.forEach(item => {
-            item.category.forEach(cat => {
-                if (isJobCategory(cat)) { // Adjust this function to filter valid job categories
-                    categories.add(cat);
-                }
-            });
-        });
-
-        categories.forEach(cat => {
-            const option = document.createElement('option');
-            option.value = cat;
-            option.textContent = cat;
-            jobCategorySelect.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error fetching categories:', error);
-    }
-}
-
-function isJobCategory(category) {
-    // Implement logic to determine if the category is a valid job category
-    const validCategories = ['Engineering', 'Sales', 'Marketing']; // Example categories
-    return validCategories.includes(category);
-}
-
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const jobCategory = jobCategorySelect.value;
-    const frequency = document.getElementById('frequency').value;
-
-    const message = `Hello Ognate,\n\nI would like to receive job alerts for ${jobCategory} with updates every ${frequency}. Thank you!`;
-
-    // Redirect to WhatsApp with prefilled message
-    const whatsappUrl = `https://wa.me/YOUR_WHATSAPP_NUMBER?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-
-    // Fetch job listings from RSS feed
-    const rssUrl = 'https://www.jobsinkenya.co.ke/wpjobboard/xml/rss/?filter=active';
-    
-    try {
-        const feed = await parser.parseURL(rssUrl);
-        displayJobListings(feed.items.filter(item => item.category.includes(jobCategory)));
-    } catch (error) {
-        console.error('Error fetching job listings:', error);
-        jobListingsDiv.innerHTML = '<p>Error fetching job listings.</p>';
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    fetchCategories();
 });
 
-function displayJobListings(items) {
-    jobListingsDiv.innerHTML = '';
-    items.forEach(item => {
-        const jobElement = document.createElement('div');
-        jobElement.innerHTML = `
-            <h3>${item.title}</h3>
-            <p>${item.description}</p>
-            <a href="${item.link}" target="_blank">View Job</a>
-            <hr>
-        `;
-        jobListingsDiv.appendChild(jobElement);
+async function fetchCategories() {
+    const url = `https://api.adzuna.com/v1/api/jobs/gb/categories?app_id=${appId}&app_key=${appKey}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        populateCategories(data.results);
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+    }
+}
+
+function populateCategories(categories) {
+    const jobCategorySelect = document.getElementById('jobCategory');
+    jobCategorySelect.innerHTML = '<option value="">Select a job category</option>';
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.tag;
+        option.textContent = category.label;
+        jobCategorySelect.appendChild(option);
     });
 }
 
-// Call the function to fetch categories when the page loads
-fetchCategories();
+document.getElementById('searchButton').addEventListener('click', () => {
+    const jobCategory = document.getElementById('jobCategory').value;
+    if (jobCategory) {
+        searchJobs(jobCategory);
+    }
+});
+
+async function searchJobs(category) {
+    const url = `https://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=5&offset=${offset}&category=${category}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        displayJobs(data.results);
+        offset += 5; // Update offset for loading more results
+        document.getElementById('loadMore').style.display = 'block';
+    } catch (error) {
+        console.error("Error fetching job listings:", error);
+    }
+}
+
+function displayJobs(jobs) {
+    const jobResults = document.getElementById('jobResults');
+    jobResults.innerHTML = ''; // Clear previous results
+    jobs.forEach(job => {
+        const card = document.createElement('div');
+        card.className = 'job-card';
+        card.innerHTML = `
+            <h3>${job.title}</h3>
+            <p><strong>Company:</strong> ${job.company.name}</p>
+            <p><strong>Location:</strong> ${job.location.display_name}</p>
+            <p>${job.description.substring(0, 100)}...</p>
+            <a href="${job.redirect_url}" target="_blank">Apply</a>
+        `;
+        jobResults.appendChild(card);
+    });
+}
+
+document.getElementById('loadMore').addEventListener('click', () => {
+    const jobCategory = document.getElementById('jobCategory').value;
+    if (jobCategory) {
+        searchJobs(jobCategory);
+    }
+});
