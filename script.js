@@ -20,7 +20,7 @@ document.getElementById('alertForm').addEventListener('submit', function (event)
     const frequency = document.getElementById('frequency').value;
 
     const message = `I want alerts for ${jobCategory} jobs with a frequency of ${frequency}.`;
-    const whatsappNumber = 'YOUR_WHATSAPP_NUMBER'; // Replace with your WhatsApp number
+    const whatsappNumber = '+254783344123'; // Replace with your WhatsApp number
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
     window.open(whatsappUrl, '_blank');
