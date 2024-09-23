@@ -1,15 +1,29 @@
-<form id="job-alert-form">
-    <label for="job-category">Job Category:</label>
-    <select id="job-category">
-        <!-- Populate options dynamically or manually -->
-    </select>
-
-    <label for="frequency">Frequency of Alerts:</label>
-    <select id="frequency">
-        <option value="daily">Daily</option>
-        <option value="weekly">Weekly</option>
-        <option value="monthly">Monthly</option>
-    </select>
-
-    <button type="submit">Get Alerts</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Alerts</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Job Alerts</h1>
+        <form id="alert-form">
+            <label for="job-category">Job Category:</label>
+            <select id="job-category" required>
+                <option value="">Select a category</option>
+            </select>
+            <label for="frequency">Frequency of Alerts:</label>
+            <select id="frequency" required>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+            <button type="submit">Get Alerts</button>
+        </form>
+        <div id="job-list"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
