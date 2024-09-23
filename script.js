@@ -11,18 +11,28 @@ async function fetchCategories() {
         const categories = new Set();
 
         feed.items.forEach(item => {
-            item.category.forEach(cat => categories.add(cat)); // Add categories to the set
+            item.category.forEach(cat => {
+                if (isJobCategory(cat)) { // Adjust this function to filter valid job categories
+                    categories.add(cat);
+                }
+            });
         });
 
         categories.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat;
             option.textContent = cat;
-            jobCategorySelect.appendChild(option); // Populate the dropdown
+            jobCategorySelect.appendChild(option);
         });
     } catch (error) {
         console.error('Error fetching categories:', error);
     }
+}
+
+function isJobCategory(category) {
+    // Implement logic to determine if the category is a valid job category
+    const validCategories = ['Engineering', 'Sales', 'Marketing']; // Example categories
+    return validCategories.includes(category);
 }
 
 form.addEventListener('submit', async (event) => {
