@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Alerts</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Job Alerts</h1>
+        <p>Sign up for job alerts tailored to your preferences!</p>
+    </header>
+    <main>
+        <form id="job-preference-form">
+            <label for="job-type">Job Type:</label>
+            <input type="text" id="job-type" name="job-type" required>
+            <label for="phone">WhatsApp Number:</label>
+            <input type="text" id="phone" name="phone" required>
+            <button type="submit">Get Alerts</button>
+        </form>
+        <div id="message"></div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
