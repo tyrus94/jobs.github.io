@@ -3,84 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Alerts</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-        }
-        header {
-            margin-bottom: 20px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        select, button {
-            margin-top: 10px;
-            padding: 10px;
-        }
-    </style>
+    <title>Job Alert Subscription</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Job Alerts Subscription</h1>
-    </header>
-    <main>
-        <form id="job-preference-form">
-            <label for="job-type">Select Job Category:</label>
-            <select id="job-type" name="job-type" required>
-                <option value="">--Select--</option>
+    <div class="container">
+        <h1>Subscribe to Job Alerts</h1>
+        <form id="alertForm">
+            <label for="jobCategory">Job Category:</label>
+            <select id="jobCategory" name="jobCategory" required>
+                <option value="">Select a category</option>
             </select>
+
             <label for="frequency">Frequency of Alerts:</label>
             <select id="frequency" name="frequency" required>
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
             </select>
+
             <button type="submit">Get Alerts</button>
         </form>
-    </main>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const country = 'ke'; // Use 'ke' for Kenya
-            const appID = 'adbe43d7';
-            const appKey = '2abd1f259a8f9ca5b42625f016173e0b';
+    </div>
 
-            fetch(`https://api.adzuna.com/v1/api/jobs/${country}/categories?app_id=${appID}&app_key=${appKey}`)
-                .then(response => response.json())
-                .then(data => {
-                    populateDropdown(data.results);
-                })
-                .catch(error => console.error('Error fetching categories:', error));
-        });
-
-        function populateDropdown(categories) {
-            const dropdown = document.getElementById('job-type');
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category.tag; // use tag for value
-                option.textContent = category.label; // display label
-                dropdown.appendChild(option);
-            });
-        }
-
-        document.getElementById('job-preference-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const jobType = document.getElementById('job-type').value;
-            const frequency = document.getElementById('frequency').value;
-
-            const whatsappMessage = `Hi! I want to subscribe to job alerts for ${jobType} and I’d like to receive updates ${frequency}.`;
-            const whatsappNumber = 'YOUR_WHATSAPP_NUMBER'; // Replace with your WhatsApp number
-            const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
-            
-            window.open(whatsappLink, '_blank'); // Opens WhatsApp chat
-        });
-    </script>
+    <script src="script.js"></script> <!-- Link to your JavaScript file -->
 </body>
 </html>
