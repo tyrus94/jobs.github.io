@@ -3,35 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Job Board</title>
-    <script src="https://unpkg.com/rss-parser/dist/rss-parser.min.js"></script>
+    <title>Job Search</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Job Alerts Signup</h1>
-        <form id="jobAlertForm">
-            <label for="jobCategory">Job Category:</label>
-            <select id="jobCategory">
-                <option value="Full-time">Full-time</option>
-                <option value="Part-time">Part-time</option>
-                <option value="Internship">Internship</option>
-                <!-- Add more categories as needed -->
-            </select>
-
-            <label for="frequency">Frequency of Alerts:</label>
-            <select id="frequency">
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-            </select>
-
-            <button type="submit">Get Alerts</button>
-        </form>
-        
-        <div id="jobListings"></div>
+        <h1>Job Search</h1>
+        <select id="jobCategory"></select>
+        <button id="searchButton">Search</button>
+        <div id="jobResults"></div>
+        <button id="loadMore" style="display: none;">Load More</button>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
