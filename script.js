@@ -1,40 +1,41 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const jobCategorySelect = document.getElementById('job-category');
-    const jobListDiv = document.getElementById('job-list');
+const form = document.getElementById('jobAlertForm');
+const jobListingsDiv = document.getElementById('jobListings');
+const parser = new RSSParser();
 
-    // Fetch and populate job categories
-    fetch('https://www.jobsinkenya.co.ke/wpjobboard/xml/rss/?filter=active')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(str => new window.DOMParser().parseFromString(str, 'text/xml'))
-        .then(data => {
-            const items = data.querySelectorAll('item');
-            items.forEach(item => {
-                const category = item.querySelector('category').textContent;
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                if (!Array.from(jobCategorySelect.options).some(opt => opt.value === category)) {
-                    jobCategorySelect.appendChild(option);
-                }
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching the RSS feed:', error);
-            jobListDiv.innerHTML = '<p>Error fetching job listings.</p>';
-        });
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-    // Handle form submission
-    document.getElementById('alert-form').addEventListener('submit', (event) => {
-        event.preventDefault();
-        const jobCategory = jobCategorySelect.value;
-        const frequency = document.getElementById('frequency').value;
-        const message = `Hello Ognate,\n\nI would like to receive job alerts for ${jobCategory} with updates every ${frequency}. Thank you!`;
-        const whatsappUrl = `https://wa.me/+254783344123?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
-    });
+    const jobCategory = document.getElementById('jobCategory').value;
+    const frequency = document.getElementById('frequency').value;
+
+    const message = `Hello Ognate,\n\nI would like to receive job alerts for ${jobCategory} with updates every ${frequency}. Thank you!`;
+
+    // Redirect to WhatsApp with prefilled message
+    const whatsappUrl = `https://wa.me/+254705757661?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+
+    // Fetch job listings from RSS feed
+    const rssUrl = 'https://www.jobsinkenya.co.ke/wpjobboard/xml/rss/?filter=active';
+    
+    try {
+        const feed = await parser.parseURL(rssUrl);
+        displayJobListings(feed.items);
+    } catch (error) {
+        console.error('Error fetching job listings:', error);
+        jobListingsDiv.innerHTML = '<p>Error fetching job listings.</p>';
+    }
 });
+
+function displayJobListings(items) {
+    jobListingsDiv.innerHTML = '';
+    items.forEach(item => {
+        const jobElement = document.createElement('div');
+        jobElement.innerHTML = `
+            <h3>${item.title}</h3>
+            <p>${item.description}</p>
+            <a href="${item.link}" target="_blank">View Job</a>
+            <hr>
+        `;
+        jobListingsDiv.appendChild(jobElement);
+    });
+}
